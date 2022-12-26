@@ -1,0 +1,50 @@
+services:
+  sublet_db:
+    container_name: &db_container_name sublet_db
+    image: postgres:14
+    volumes:
+    - type: volume
+      source: sublet_db_data
+      target: &data_path /data
+    environment:
+      PGDATA: *data_path
+      POSTGRES_USER: &db_user postgres
+      POSTGRES_PASSWORD: &db_password waterloo
+      POSTGRES_DB: &db_name sublet
+    ports:
+    - target: &db_port 5432
+      published: 5433
+    networks:
+    - sublet_network
+  sublet_backend:
+    container_name: sublet_backend
+    image: node:18
+    working_dir: &dir /usr/src/app
+    volumes:
+    - type: bind
+      source: .
+      target: *dir
+      consistency: cached
+    - sublet_backend_node_modules:/usr/src/app/node_modules
+    ports:
+    - target: &backend_port 5000
+      published: 5001
+    environment:
+      DB_HOST: *db_container_name
+      DB_NAME: *db_name
+      DB_PORT: *db_port
+      DB_USER: *db_user
+      DB_PASSWORD: *db_password
+      DB_DIALECT: pg
+      PORT: *backend_port
+    command: bash -c "npm i -g nodemon && nodemon ./bin/www"
+    networks: 
+    - sublet_network
+
+networks:
+  sublet_network:
+
+volumes:
+  sublet_db_data:
+  sublet_backend_node_modules:
+    external: true
