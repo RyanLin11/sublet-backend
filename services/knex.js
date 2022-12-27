@@ -1,4 +1,10 @@
-const knex = require('knex')({
+const knex = require('knex')("DATABASE_URL" in process.env? 
+{
+    client: 'pg',
+    connection: process.env.DATABASE_URL,
+}
+:
+{
     client: process.env.DB_DIALECT,
     connection: {
         host: process.env.DB_HOST,
