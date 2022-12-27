@@ -37,7 +37,7 @@ const store = new KnexSessionStore({
 });
 const sessionOptions = {
     cookie: {
-        httpOnly: true,
+        httpOnly: false,
         secure: process.env.NODE_ENV === 'production',
         maxAge: 86400000,
         sameSite: process.env.NODE_ENV === 'production'? 'none': false,
