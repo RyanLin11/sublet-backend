@@ -8,7 +8,8 @@ class SessionController {
         try {
             // do not create a new session if one already exists
             if (req.session.user_id) {
-                res.status(400).status('You are already signed in');
+                res.status(400).send('You are already signed in');
+                return;
             }
             // determine the value of attribute "user_id" that is assigned to this new session
             const result = await UserService.getUser({ username: req.body.username });

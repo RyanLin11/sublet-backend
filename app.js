@@ -1,6 +1,4 @@
 const express = require('express');
-const path = require('path');
-const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 
 require('dotenv').config();
@@ -9,8 +7,6 @@ const app = express();
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
-//app.use(express.static(path.join(__dirname, 'public')));
 
 // CORS setup
 const cors = require('cors');
@@ -42,6 +38,7 @@ const sessionOptions = {
         maxAge: 86400000,
         sameSite: process.env.NODE_ENV === 'production'? 'none': false,
     },
+    proxy: true,
     resave: false,
     saveUninitialized: false,
     secret: process.env.SESSION_SECRET,
