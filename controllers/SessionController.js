@@ -8,8 +8,7 @@ class SessionController {
         try {
             // do not create a new session if one already exists
             if (req.session.user_id) {
-                res.status(400).send('You are already signed in');
-                return;
+                return next(createError(400, 'You are already signed in'));
             }
             // determine the value of attribute "user_id" that is assigned to this new session
             const result = await UserService.getUser({ username: req.body.username });
@@ -18,15 +17,7 @@ class SessionController {
             }
             // determine if the request is authorized to add this attribute "user_id"
             const db_user = result[0];
-            const isValid = await new Promise((resolve, reject) => {
-                bcrypt.compare(req.body.password, db_user.password, (err, result) => {
-                    if (err) {
-                        reject(err);
-                    } else {
-                        resolve(result);
-                    }
-                })
-            });
+            const isValid = await bcrypt.compare(req.body.password, db_user.password);
             if (!isValid) {
                 return next(createError(400, 'Username or password is incorrect'));
             }

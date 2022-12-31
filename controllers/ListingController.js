@@ -26,9 +26,7 @@ class ListingController {
     static async getListings(req, res, next) {
         try {
             const listings = await ListingService.getListings();
-            console.log(req.query);
             if (req.query?.sort) {
-                console.log(req.query.sort);
                 const key = req.query.sort;
                 if (key.charAt(0) === '-') {
                     listings.sort((a, b) => a[key.substring(1)] < b[key.substring(1)]? -1: 1)

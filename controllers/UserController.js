@@ -14,15 +14,7 @@ class UserController {
 
     static async createUser(req, res, next) {
         try {
-            req.body.password = await new Promise((resolve, reject) => {
-                bcrypt.hash(req.body.password, 10, (err, hash) => {
-                    if (err) {
-                        reject(err);
-                    } else {
-                        resolve(hash);
-                    }
-                })
-            });
+            req.body.password = await bcrypt.hash(req.body.password, 10);
             const user = await UserService.createUser(req.body);
             res.send(user);
         } catch (e) {
@@ -58,7 +50,6 @@ class UserController {
             // validate that new username is unique
             if (username !== db_user.username) {
                 const existingUser = await UserService.getUser({ username });
-                console.log(existingUser);
                 if (existingUser.length === 0) {
                     updateFields.username = username;
                 } else {
